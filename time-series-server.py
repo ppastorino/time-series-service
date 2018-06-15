@@ -4,8 +4,7 @@ import json
 import pandas
 import datetime
 import numpy as np
-
-print("HELLO")
+from datasource import DataSourceManager
 
 class CustomEncoder(json.JSONEncoder):
 
@@ -18,40 +17,49 @@ class CustomEncoder(json.JSONEncoder):
             return json.JSONEncoder.default(self, obj)
 
 
+datasource_manager = DataSourceManager()
 app = Flask(__name__)
 app.json_encoder = CustomEncoder
 
-usd = pandas.read_json('./data/usd.json', orient='records', typ='frame',
-                       dtype={"d": "datetime64[ns]", "v": "float64"})
+def build_data_frame(series_list):
+    merge = None
+    for s in series_list:
+        print(s)
+        if merge is None:
+            merge = datasource_manager.get_data_frame(s)
+        else:
+            merge = pandas.merge(merge, datasource_manager.get_data_frame(s), on='d')
 
+    merge.index = merge['d']
+    del merge['d']
+    merge.columns = series_list
 
-merval = pandas.read_json('./data/merval.json', orient='records', typ='frame',
-                          dtype={"d": "datetime64[ns]", "v": "float64"})
+    print(merge)
 
-series = ["dolar", "merval"]
-
-merge = pandas.merge(usd, merval, on='d')
-merge.index = merge['d']
-del merge['d']
-merge.columns = ['dolar', 'merval']
-merge = merge['2017']
-merge = (merge-merge.min())/(merge.max()-merge.min())
+    """ TODO utilizar parametros desde/hastsa """
+    merge = merge['2017']
+    if len(series_list) > 1:
+        merge = (merge-merge.min())/(merge.max()-merge.min())
+    return merge
 
 
 @app.route("/api/series/options", methods=['GET'])
-def seriesOptions():
+def series_options():
     return json.dumps(series)
 
 
 @app.route("/api/series/data", methods=['GET'])
-def seriesData():
+def series_data():
     print(request.args.getlist("serie"))
+    series_list = request.args.getlist("serie")
+    data_frame = build_data_frame(series_list)
+
+    values = []
+    for s in series_list:
+                values.append({"data": data_frame[s].values.tolist(), "label": s})
     response = {
-                "index": merge.index.values.tolist(),
-                "values":
-                [
-                    {"data": merge['dolar'].values.tolist(), "label": "dolar"},
-                    {"data": merge['merval'].values.tolist(), "label": "merval"}
-                ]
+                "index": series_list,
+                "values": values
                }
+
     return json.dumps(response)
