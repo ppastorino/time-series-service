@@ -23,7 +23,11 @@ app = Flask(__name__)
 CORS(app)
 app.json_encoder = CustomEncoder
 
-def build_data_frame(series_list):
+
+def iso_to_date(iso_string):
+    return datetime.datetime.strptime(iso_string[:-6], '%Y-%m-%dT%H:%M:%S')
+
+def build_data_frame(series_list, date_from, date_to):
     merge = None
     for s in series_list:
         print(s)
@@ -37,7 +41,7 @@ def build_data_frame(series_list):
     merge.columns = series_list
 
     """ TODO utilizar parametros desde/hastsa """
-    merge = merge['2017']
+    merge = merge[date_from:date_to]
     if len(series_list) > 1:
         merge = (merge-merge.min())/(merge.max()-merge.min())
 
@@ -55,7 +59,10 @@ def series_options():
 def series_data():
     print(request.args.getlist("serie"))
     series_list = request.args.getlist("serie")
-    data_frame = build_data_frame(series_list)
+    date_from = iso_to_date(request.args.get("from"))
+    date_to = iso_to_date(request.args.get("to"))
+    
+    data_frame = build_data_frame(series_list, date_from, date_to)
 
     values = []
     for s in series_list:
