@@ -4,9 +4,8 @@ import pandas
 class FileDatasource:
     """" File based dataSource  (json format)"""
 
-
     def __init__(self, path):
-        self._path = path;
+        self._path = path
 
     def get_data_frame(self):
         return pandas.read_json(self._path, orient='records', typ='frame',

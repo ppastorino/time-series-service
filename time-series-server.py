@@ -5,6 +5,7 @@ import pandas
 import datetime
 import numpy as np
 from datasource import DataSourceManager
+from flask_cors import CORS
 
 class CustomEncoder(json.JSONEncoder):
 
@@ -19,6 +20,7 @@ class CustomEncoder(json.JSONEncoder):
 
 datasource_manager = DataSourceManager()
 app = Flask(__name__)
+CORS(app)
 app.json_encoder = CustomEncoder
 
 def build_data_frame(series_list):
@@ -34,12 +36,13 @@ def build_data_frame(series_list):
     del merge['d']
     merge.columns = series_list
 
-    print(merge)
-
     """ TODO utilizar parametros desde/hastsa """
     merge = merge['2017']
     if len(series_list) > 1:
         merge = (merge-merge.min())/(merge.max()-merge.min())
+
+    print(merge)
+
     return merge
 
 
@@ -58,7 +61,7 @@ def series_data():
     for s in series_list:
                 values.append({"data": data_frame[s].values.tolist(), "label": s})
     response = {
-                "index": series_list,
+                "index": data_frame.index.values.tolist(),
                 "values": values
                }
 
