@@ -1,1 +1,1 @@
-web: gunicorn time-series-server:time-series-server
+web: gunicorn app:app
