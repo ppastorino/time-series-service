@@ -13,7 +13,7 @@ class FileDatasource:
                                dtype={"d": "datetime64[ns]", "v": "float64"})
 
 
-BCRA_URL_BASE = "http://api.estadisticasbcrax.com/"
+BCRA_URL_BASE = "http://api.estadisticasbcra.com/"
 BCRA_URL_DOLAR = BCRA_URL_BASE + "usd_of"
 BCRA_URL_MERVAL = BCRA_URL_BASE + "merval"
 BCRA_BEARER_TOKEN = "BEARER eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NTk0NzM1NzcsInR5cGUiOiJleHRlcm5hbCIsInVzZXIiOiJwcGFzdG9yaW5vQGdtYWlsLmNvbSJ9.Gvo5BUpGaNV_uq0AbKtQpCtobVdQwg7ruRkMjFhjLBbyQIiPidw_OBxIMXeqfeVaK6M7De-Ixc458soirfPgMg"

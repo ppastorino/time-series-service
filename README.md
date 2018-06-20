@@ -6,12 +6,13 @@ venv\Scripts\activate
 #Dependencies
 
 pipenv install Flask
+pipenv install flask_cors
 pipenv install requests
 pipenv install gunicorn
 
 #Local Run
 
-set FLASK_APP=time-series-server.py
+set FLASK_APP=time_series_server.py
 python -m flask run
 
 #Heroku deploy
