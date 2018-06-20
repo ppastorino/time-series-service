@@ -8,6 +8,7 @@ pandas = "*"
 flask = "*"
 gunicorn = "*"
 requests = "*"
+flask-cors = "*"
 
 [dev-packages]
 
