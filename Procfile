@@ -1,1 +1,1 @@
-web: gunicorn app:app --reaload
+web: gunicorn app:app --reload
