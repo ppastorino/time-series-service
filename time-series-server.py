@@ -40,8 +40,9 @@ def build_data_frame(series_list, date_from, date_to):
     del merge['d']
     merge.columns = series_list
 
-    """ TODO utilizar parametros desde/hastsa """
-    merge = merge[date_from:date_to]
+    if not (date_from is None) and not (date_to is None):
+        merge = merge[date_from:date_to]
+
     if len(series_list) > 1:
         merge = (merge-merge.min())/(merge.max()-merge.min())
 
@@ -49,6 +50,11 @@ def build_data_frame(series_list, date_from, date_to):
 
     return merge
 
+def get_date_param(request, param):
+    param_value = request.args.get(param)
+    if not (param_value is None):
+        return iso_to_date(param_value)
+    return None
 
 @app.route("/api/series/options", methods=['GET'])
 def series_options():
@@ -59,10 +65,8 @@ def series_options():
 def series_data():
     print(request.args.getlist("serie"))
     series_list = request.args.getlist("serie")
-    date_from = iso_to_date(request.args.get("from"))
-    date_to = iso_to_date(request.args.get("to"))
-    
-    data_frame = build_data_frame(series_list, date_from, date_to)
+
+    data_frame = build_data_frame(series_list, get_date_param(request,"from"), get_date_param(request,"to"))
 
     values = []
     for s in series_list:
@@ -73,3 +77,7 @@ def series_data():
                }
 
     return json.dumps(response)
+
+
+if __name__ == '__main__':
+    app.run(debug=True, use_reloader=True)

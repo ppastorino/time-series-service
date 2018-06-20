@@ -1,1 +1,1 @@
-web: python stats-server.py
+web: gunicorn time-series-server:time-series-server

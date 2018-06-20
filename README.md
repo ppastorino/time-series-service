@@ -1,12 +1,20 @@
-# Heroku
-
-https://becominghuman.ai/steps-to-create-and-deploy-python-web-app-on-heroku-95b6c4f570b0
-
-https://stats-arg-server.herokuapp.com
+#Virtual Environment
 
 virtualenv venv
 venv\Scripts\activate
-pip install Flask
-pipenv install
+
+#Dependencies
+
+pipenv install Flask
+pipenv install requests
+pipenv install gunicorn
+
+#Local Run
+
 set FLASK_APP=time-series-server.py
 python -m flask run
+
+#Heroku deploy
+
+
+https://time-series-server.herokuapp.com
